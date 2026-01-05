@@ -17,12 +17,12 @@ jobs:
 
       - name: Generate version
         id: version
-        uses: ./.github/actions/Build/gerenate-version
+        uses: LeMeEich/.github/.github/actions/Build/gerenate-version@master
         with:
           run_number: ${{ github.run_number }}
 
       - name: Build Application
-        uses: ./.github/actions/Build/script
+        uses: LeMeEich/.github/.github/actions/Build/script@master
         with:
           version: ${{ steps.version.outputs.version }}
 
@@ -49,7 +49,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🚀 Deploy este Build" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "1. Acesse [Actions → Deploy](../../actions/workflows/deploy.yml)" >> $GITHUB_STEP_SUMMARY
+          echo "1. Acesse [Actions → Deploy](.LeMeEich/.github/.LeMeEich/.github/actions/workflows/deploy.yml)" >> $GITHUB_STEP_SUMMARY@master
           echo "2. Clique em **Run workflow**" >> $GITHUB_STEP_SUMMARY
           echo "3. Cole o Run ID: \`${{ github.run_id }}\`" >> $GITHUB_STEP_SUMMARY
           echo "4. Escolha o ambiente" >> $GITHUB_STEP_SUMMARY
@@ -71,7 +71,7 @@ jobs:
           name: ${{ needs.build.outputs.artifact-name }}
 
       - name: Deploy to DES
-        uses: ./.github/actions/Deploy/script
+        uses: LeMeEich/.github/.github/actions/Deploy/script@master
         with:
           environment: des
           version: ${{ needs.build.outputs.version }}
