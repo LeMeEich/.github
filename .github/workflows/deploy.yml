@@ -1,7 +1,7 @@
 name: Deploy
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       run_id:
         description: 'Run ID do build'
@@ -10,17 +10,13 @@ on:
       environment:
         description: 'Ambiente para deploy'
         required: true
-        type: choice
-        options:
-          - des
-          - pre
-          - prod
+        type: string
 
 jobs:
   deploy:
-    name: Deploy Build #${{ github.event.inputs.run_id }} to ${{ github.event.inputs.environment }}
+    name: Deploy Build #${{ inputs.run_id }} to ${{ inputs.environment }}
     runs-on: ubuntu-latest
-    environment: ${{ github.event.inputs.environment }}
+    environment: ${{ inputs.environment }}
     
     steps:
       - name: Checkout code
@@ -33,7 +29,7 @@ jobs:
         id: build_info
         uses: LeMeEich/.github/.github/actions/Deploy/get-build-info@master
         with:
-          run_id: ${{ github.event.inputs.run_id }}
+          run_id: ${{ inputs.run_id }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download build artifact
@@ -41,20 +37,20 @@ jobs:
         with:
           name: ${{ steps.build_info.outputs.artifact_name }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.inputs.run_id }}
+          run-id: ${{ inputs.run_id }}
 
       - name: Deploy Application
         uses: LeMeEich/.github/.github/actions/Deploy/script@master
         with:
-          environment: ${{ github.event.inputs.environment }}
+          environment: ${{ inputs.environment }}
 
       - name: Deployment summary
         run: |
           echo "### 🚀 Deploy Completed" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment**: ${{ github.event.inputs.environment }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Build Number**: [#${{ steps.build_info.outputs.build_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ github.event.inputs.run_id }})" >> $GITHUB_STEP_SUMMARY
-          echo "- **Run ID**: ${{ github.event.inputs.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ inputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Build Number**: [#${{ steps.build_info.outputs.build_number }}](https://github.com/${{ github.repository }}/actions/runs/${{ inputs.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run ID**: ${{ inputs.run_id }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Artifact**: ${{ steps.build_info.outputs.artifact_name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ Deployment successful!" >> $GITHUB_STEP_SUMMARY
